@@ -1,6 +1,7 @@
 package fr.afpa;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -33,6 +34,8 @@ public class App extends Application {
 
         Label inputUserLabel = new Label("Entrée Utilisateur : "); // Instanciation d'un texte avec la Class Label.
         Label inputUserCopyLabel = new Label("Copie de l'entrée : ");
+        Label messageLabel = new Label("EFFACER !!!");
+        messageLabel.setVisible(false);
 
         TextField userInputField = new TextField(); // Instanciation d'un texte avec la Class TextField.
         TextField copyField = new TextField();
@@ -50,7 +53,7 @@ public class App extends Application {
 
         // méthode 1 : ajouter les composants graphiques directement dans le constructeur
         // à l'instanciation
-        VBox vbox = new VBox(copyButton, clearButton, quitButton);
+        VBox vbox = new VBox(copyButton, clearButton, quitButton, messageLabel);
 
         // méthode 2 : ajouter UN à UN les composants graphiques
         // vbox.getChildren().add(copyButton);
@@ -74,40 +77,50 @@ public class App extends Application {
         // Gestionnaire d'évènement = classe "EventHandler"
 
         // Version 1 : classe interne anonyme
-        // quitButton.setOnAction(new EventHandler<ActionEvent>() {
+        quitButton.setOnAction(new EventHandler<ActionEvent>() {
 
-        //     @Override
-        //     public void handle(ActionEvent event) {
-        //         Platform.exit();
-        //     }
+            @Override
+            public void handle(ActionEvent event) {
+                Platform.exit();
+            }
 
-        // });
+        });
 
         // Version 2 : classe nommée indépendante
         // -> il faut créer un nouveau fichier
         quitButton.setOnAction(new QuitEventHandler());
 
-        // quitButton.setOnAction((ActionEvent event) -> {
-        // Platform.exit();
+        // Version 3 : fonction lambda (aussi appellée "fonction flêchée")
+        // - avec paramètre typé
+        quitButton.setOnAction((ActionEvent event) -> {
+            Platform.exit();
+        });
+
+        // - avec paramètre non typé
+        quitButton.setOnAction(event -> {
+            Platform.exit();
+        });
+
+        // - solution avec référence de méthode
+        quitButton.setOnAction(App::quit);
+
+        // clearButton.setOnAction(new EventHandler<ActionEvent>() {
+
+        //     @Override
+        //     public void handle(ActionEvent event) {
+        //         messageLabel.setVisible(true);
+        //     }
+            
         // });
 
-        clearButton.setOnAction(new EventHandler<ActionEvent>() {
+        // copyButton.setOnAction(new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent event) {
-
-                // Objectif : ajouter un label (afficher un truc)
-                
-                // 1 créer un label
-                Label messageLabel = new Label("EFFACER !!!");
-                messageLabel.setVisible(false);
-                
-                // 2 l'ajouter quelque part
-                vbox.getChildren().add(messageLabel);
-
-            }
+        //     @Override
+        //     public void handle(ActionEvent event) {
+        //         messageLabel.setVisible(false);
+        //     }
             
-        });
+        // });
 
         // ------------- FIN GESTION DES EVENEMENTS ----------
 
@@ -119,6 +132,12 @@ public class App extends Application {
         stage.show();
 
     } // fin de la méthode "start"
+
+
+
+    public static void quit(ActionEvent e) {
+        Platform.exit();
+    }
 
 } // fin de la classe "App"
 
