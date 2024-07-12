@@ -1,6 +1,7 @@
 package fr.afpa;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -9,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -33,63 +35,59 @@ public class App extends Application {
 
         Label inputUserLabel = new Label("Entrée Utilisateur : "); // Instanciation d'un texte avec la Class Label.
         Label inputUserCopyLabel = new Label("Copie de l'entrée : ");
+        Label messageLabelDeleted = new Label("Entrée effacer!");
+        Label messageLabelCopied = new Label("Entrée copier!");
+        messageLabelCopied.setVisible(false);
+        messageLabelDeleted.setVisible(false);
 
         TextField userInputField = new TextField(); // Instanciation d'un texte avec la Class TextField.
         TextField copyField = new TextField();
 
+        VBox vbox = new VBox(copyButton, clearButton, quitButton);
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER);
+
         // ------> Création des "PANES"
         GridPane root = new GridPane();
+        root.setAlignment(Pos.CENTER);
+        // Montre le grid dans la scene.
+        root.setGridLinesVisible(true);
+        root.setHgap(10);
+        root.setVgap(5);
 
-        // .getChildren().addAll() permet d'utiliser toute les instancations du block.
-        // root.getChildren().addAll(label, label2, button1, button2, button3,
-        // textField1, textField2);
+        // RowConstraints rowConstraint1 = new RowConstraints();
+        // rowConstraint1.setPercentHeight(50);
+        // root.getRowConstraints().addAll(rowConstraint1, rowConstraint1);
+
+        copyButton.setMaxSize(100, 100);
+        clearButton.setMaxSize(100, 100);
+        quitButton.setMaxSize(100, 100);
+
         root.add(inputUserLabel, 0, 0, 1, 1);
         root.add(inputUserCopyLabel, 0, 1, 1, 1);
         root.add(userInputField, 1, 0, 1, 1);
         root.add(copyField, 1, 1, 1, 1);
+        root.add(vbox, 2,0,1,3);
 
-        // méthode 1 : ajouter les composants graphiques directement dans le constructeur
-        // à l'instanciation
-        VBox vbox = new VBox(copyButton, clearButton, quitButton);
+        root.add(messageLabelCopied, 0, 2, 3, 1);
+        root.add(messageLabelDeleted, 0, 2, 3, 1);
+        // root.add(copyButton,2,0,1,1);
+        // root.add(clearButton,2,1,1,1);
+        // root.add(quitButton, 2, 2, 1, 1);
+        
+        copyButton.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
 
-        // méthode 2 : ajouter UN à UN les composants graphiques
-        // vbox.getChildren().add(copyButton);
-        // vbox.getChildren().add(clearButton);
-        // vbox.getChildren().add(quitButton);
-
-        // méthode 3 : ajout de tout en bloc
-        // vbox.getChildren().addAll(copyButton, clearButton, quitButton);
-
-        root.getChildren().addAll(vbox);
-
-        root.setHgap(10);
-        root.setVgap(10);
-
-        copyButton.setOnAction(event -> {
-            inputUserCopyLabel.setText("Copié avec succès!");
+                messageLabelCopied.setVisible(true);
+                messageLabelDeleted.setVisible(false);
+                // vbox.getChildren().add(messageLabelCopied);
+                // vbox.getChildren().add(messageLabelDeleted);
+            }
         });
 
-        // ------------- GESTION DES EVENEMENTS ----------
-        // ajouter un GESTIONNAIRE D'EVENEMENT à un composant graphiques
-        // Gestionnaire d'évènement = classe "EventHandler"
-
-        // Version 1 : classe interne anonyme
-        // quitButton.setOnAction(new EventHandler<ActionEvent>() {
-
-        //     @Override
-        //     public void handle(ActionEvent event) {
-        //         Platform.exit();
-        //     }
-
-        // });
-
-        // Version 2 : classe nommée indépendante
-        // -> il faut créer un nouveau fichier
         quitButton.setOnAction(new QuitEventHandler());
-
-        // quitButton.setOnAction((ActionEvent event) -> {
-        // Platform.exit();
-        // });
 
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -97,24 +95,19 @@ public class App extends Application {
             public void handle(ActionEvent event) {
 
                 // Objectif : ajouter un label (afficher un truc)
-                
                 // 1 créer un label
-                Label messageLabel = new Label("EFFACER !!!");
-                messageLabel.setVisible(false);
-                
+                messageLabelCopied.setVisible(false);
+                messageLabelDeleted.setVisible(true);
                 // 2 l'ajouter quelque part
-                vbox.getChildren().add(messageLabel);
-
+                // vbox.getChildren().add(messageLabelCopied);
+                // vbox.getChildren().add(messageLabelDeleted);
             }
-            
         });
 
         // ------------- FIN GESTION DES EVENEMENTS ----------
 
-        Scene scene = new Scene(root, 440, 200); // root instancier avec toute les instanciations pour créer le Stage.
+        Scene scene = new Scene(root, 440, 150); // root instancier avec toute les instanciations pour créer le Stage.
 
-        vbox.setAlignment(Pos.CENTER_RIGHT);
-        root.setAlignment(Pos.CENTER);
         stage.setScene(scene);
         stage.show();
 
@@ -124,6 +117,9 @@ public class App extends Application {
 
 /*
  * Ressources utilisés :
+ * 
+ * Code de Ludo sur GitHub branche :
+ * https://github.com/Blossom87/JavaFX/tree/ajout-code-ludovic
  * 
  * https://www.w3resource.com/java-exercises/javafx/javafx-user-interface-
  * components-exercise-1.php Instanciation de Buttons et Label avec root.
