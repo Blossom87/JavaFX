@@ -9,7 +9,7 @@ public class QuitEventHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent event) {
         System.out.println("On quitte l'aopplication !");
-        Platform.exit();
+        
     }
 
     public static void whoAmI() {

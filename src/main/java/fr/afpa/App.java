@@ -13,6 +13,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 public class App extends Application {
 
@@ -42,6 +44,7 @@ public class App extends Application {
 
         TextField userInputField = new TextField(); // Instanciation d'un texte avec la Class TextField.
         TextField copyField = new TextField();
+        String clipboard;
 
         VBox vbox = new VBox(copyButton, clearButton, quitButton);
         vbox.setSpacing(10);
@@ -53,7 +56,7 @@ public class App extends Application {
         // Montre le grid dans la scene.
         root.setGridLinesVisible(true);
         root.setHgap(10);
-        root.setVgap(5);
+        root.setVgap(10);
 
         // RowConstraints rowConstraint1 = new RowConstraints();
         // rowConstraint1.setPercentHeight(50);
@@ -67,16 +70,16 @@ public class App extends Application {
         root.add(inputUserCopyLabel, 0, 1, 1, 1);
         root.add(userInputField, 1, 0, 1, 1);
         root.add(copyField, 1, 1, 1, 1);
-        root.add(vbox, 2,0,1,3);
+        root.add(vbox, 2, 0, 1, 3);
 
         root.add(messageLabelCopied, 0, 2, 3, 1);
         root.add(messageLabelDeleted, 0, 2, 3, 1);
         // root.add(copyButton,2,0,1,1);
         // root.add(clearButton,2,1,1,1);
         // root.add(quitButton, 2, 2, 1, 1);
-        
+
         copyButton.setOnAction(new EventHandler<ActionEvent>() {
-            
+
             @Override
             public void handle(ActionEvent event) {
 
@@ -87,7 +90,14 @@ public class App extends Application {
             }
         });
 
-        quitButton.setOnAction(new QuitEventHandler());
+        copyButton.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+
+                copyField.setText(userInputField.getText());
+            }
+        });
 
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -103,6 +113,18 @@ public class App extends Application {
                 // vbox.getChildren().add(messageLabelDeleted);
             }
         });
+
+        clearButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                System.out.println("Entrée utilisateur effacer!");
+                copyField.clear();
+            }
+        });
+
+        quitButton.setOnAction(new QuitEventHandler());
 
         // ------------- FIN GESTION DES EVENEMENTS ----------
 
@@ -126,4 +148,8 @@ public class App extends Application {
  * 
  * https://www.javaguides.net/2020/09/javafx-quit-button-example-terminate.html
  * Exit button.
+ * 
+ * https://stackoverflow.com/questions/28516654/javafx-how-to-clear-textfield-
+ * when-mouse-is-clicked-on-it
+ * Delete button fonction.
  */
