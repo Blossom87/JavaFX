@@ -43,8 +43,9 @@ public class App extends Application {
         messageLabelDeleted.setVisible(false);
 
         TextField userInputField = new TextField(); // Instanciation d'un texte avec la Class TextField.
+        userInputField.setPromptText("Entrée utilisateur.");
         TextField copyField = new TextField();
-        String clipboard;
+        copyField.setPromptText("En attente de copie.");
 
         VBox vbox = new VBox(copyButton, clearButton, quitButton);
         vbox.setSpacing(10);
@@ -54,7 +55,7 @@ public class App extends Application {
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
         // Montre le grid dans la scene.
-        root.setGridLinesVisible(true);
+        root.setGridLinesVisible(false);
         root.setHgap(10);
         root.setVgap(10);
 
