@@ -4,13 +4,20 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.input.Clipboard;
@@ -18,9 +25,9 @@ import javafx.scene.input.ClipboardContent;
 
 public class App extends Application {
 
-    /*
-     * Méthode principale.
-     */
+    public final String MESSAGE_DELETION = "Entrée effacer!";
+    public final String MESSAGE_COPY = "Entrée copier!";
+
     public static void main(String[] args) {
         launch();
     }
@@ -37,81 +44,64 @@ public class App extends Application {
 
         Label inputUserLabel = new Label("Entrée Utilisateur : "); // Instanciation d'un texte avec la Class Label.
         Label inputUserCopyLabel = new Label("Copie de l'entrée : ");
-        Label messageLabelDeleted = new Label("Entrée effacer!");
-        Label messageLabelCopied = new Label("Entrée copier!");
-        messageLabelCopied.setVisible(false);
-        messageLabelDeleted.setVisible(false);
+        Label messageLabel = new Label("Entrée effacer!");
+        messageLabel.setVisible(false);
 
         TextField userInputField = new TextField(); // Instanciation d'un texte avec la Class TextField.
         userInputField.setPromptText("Entrée utilisateur.");
         TextField copyField = new TextField();
         copyField.setPromptText("En attente de copie.");
 
-        VBox vbox = new VBox(copyButton, clearButton, quitButton);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER);
-
         // ------> Création des "PANES"
-        GridPane root = new GridPane();
+        // Création de la VBox "root"
+        VBox root = new VBox();
         root.setAlignment(Pos.CENTER);
-        // Montre le grid dans la scene.
-        root.setGridLinesVisible(false);
-        root.setHgap(10);
-        root.setVgap(10);
 
-        // RowConstraints rowConstraint1 = new RowConstraints();
+        // création de la VBox contenant les boutons
+        VBox vbox = new VBox(copyButton, clearButton, quitButton);
+        vbox.setSpacing(20);
+        vbox.setAlignment(Pos.CENTER);
+        
+        GridPane grid = new GridPane();
+
+        grid.setAlignment(Pos.CENTER);
+        // Montre le grid dans la scene.
+        grid.setGridLinesVisible(true);
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        RowConstraints rowConstraint1 = new RowConstraints(80);
+        // rowConstraint1.setVgrow(Priority.ALWAYS);
         // rowConstraint1.setPercentHeight(50);
-        // root.getRowConstraints().addAll(rowConstraint1, rowConstraint1);
+        grid.getRowConstraints().addAll(rowConstraint1, rowConstraint1);
 
         copyButton.setMaxSize(100, 100);
         clearButton.setMaxSize(100, 100);
-        quitButton.setMaxSize(100, 100);
+        quitButton.setMaxSize(100, 100); 
 
-        root.add(inputUserLabel, 0, 0, 1, 1);
-        root.add(inputUserCopyLabel, 0, 1, 1, 1);
-        root.add(userInputField, 1, 0, 1, 1);
-        root.add(copyField, 1, 1, 1, 1);
-        root.add(vbox, 2, 0, 1, 3);
+        grid.add(inputUserLabel, 0, 0, 1, 1);
+        grid.add(inputUserCopyLabel, 0, 1, 1, 1);
+        grid.add(userInputField, 1, 0, 1, 1);
+        grid.add(copyField, 1, 1, 1, 1);
 
-        root.add(messageLabelCopied, 0, 2, 3, 1);
-        root.add(messageLabelDeleted, 0, 2, 3, 1);
-        // root.add(copyButton,2,0,1,1);
-        // root.add(clearButton,2,1,1,1);
-        // root.add(quitButton, 2, 2, 1, 1);
+        // POsitionnement de la VBox : 3ème colonne, span sur 2 lignes
+        grid.add(vbox, 2, 0, 1, 2);
 
-        copyButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-
-                messageLabelCopied.setVisible(true);
-                messageLabelDeleted.setVisible(false);
-                // vbox.getChildren().add(messageLabelCopied);
-                // vbox.getChildren().add(messageLabelDeleted);
-            }
-        });
+        // Ajout de la grid dans la VBox "root"
+        root.getChildren().add(grid);
+        // ajout des messages dans la VBox "root"
+        root.getChildren().add(messageLabel);
 
         copyButton.setOnAction(new EventHandler<ActionEvent>() {
-            
             @Override
             public void handle(ActionEvent event) {
 
-                copyField.setText(userInputField.getText());
-            }
-        });
-
-        clearButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-
-                // Objectif : ajouter un label (afficher un truc)
-                // 1 créer un label
-                messageLabelCopied.setVisible(false);
-                messageLabelDeleted.setVisible(true);
-                // 2 l'ajouter quelque part
-                // vbox.getChildren().add(messageLabelCopied);
-                // vbox.getChildren().add(messageLabelDeleted);
+                // test si présence de texte dans le field
+                if (!userInputField.getText().isEmpty()) {
+                    copyField.setText(userInputField.getText());
+                    messageLabel.setVisible(true);
+                    messageLabel.setText(MESSAGE_COPY);
+                }
             }
         });
 
@@ -122,15 +112,22 @@ public class App extends Application {
 
                 System.out.println("Entrée utilisateur effacer!");
                 copyField.clear();
+                              // Objectif : ajouter un label (afficher un truc)
+                // 1 créer un label
+                messageLabel.setVisible(true);
+                messageLabel.setText(MESSAGE_DELETION);
+                // 2 l'ajouter quelque part
+                // vbox.getChildren().add(messageLabelCopied);
+                // vbox.getChildren().add(messageLabelDeleted);
             }
         });
 
         quitButton.setOnAction(new QuitEventHandler());
 
         // ------------- FIN GESTION DES EVENEMENTS ----------
-
-        Scene scene = new Scene(root, 440, 150); // root instancier avec toute les instanciations pour créer le Stage.
-
+        Scene scene = new Scene(root); // root instancier avec toute les instanciations pour créer le Stage.
+        stage.setMinHeight(300);
+        stage.setMinWidth(440);
         stage.setScene(scene);
         stage.show();
 
